@@ -21,13 +21,13 @@ public class AccountServiceImpl implements AccountService {
     private AccountDtoMapper accountDtoMapper;
 
     @Override
-    public AccountDto getByNumber(String number) {
-        return accountRepository.findById(number).map(accountDtoMapper).orElse(null);
+    public AccountDto getById(Long id) {
+        return accountRepository.findById(id).map(accountDtoMapper).orElse(null);
     }
 
     @Override
-    public Account selectByNumber(String number) {
-        return accountRepository.findById(number).orElse(null);
+    public AccountDto getByNumber(String number) {
+        return accountRepository.findByAccountNumber(number).map(accountDtoMapper).orElse(null);
     }
 
     @Override
@@ -36,8 +36,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void delete(String number) {
-        accountRepository.deleteById(number);
+    public void delete(Long id) {
+        accountRepository.deleteById(id);
     }
 
     @Override
@@ -45,4 +45,13 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findAll().stream().map(accountDtoMapper).collect(Collectors.toList());
     }
 
+    @Override
+    public void minusBalance(Long accountId, Double sum) {
+        accountRepository.minusBalance(accountId, sum);
+    }
+
+    @Override
+    public void plusBalance(Long accountId, Double sum) {
+        accountRepository.plusBalance(accountId, sum);
+    }
 }

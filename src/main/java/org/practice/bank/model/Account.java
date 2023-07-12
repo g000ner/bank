@@ -15,10 +15,14 @@ import java.util.List;
 public class Account {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "account_number")
     private String accountNumber;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "account_owner", referencedColumnName = "id")
     private Client owner;
 
@@ -26,6 +30,6 @@ public class Account {
     private String currency;
 
     @Column(name = "balance")
-    private Long balance;
+    private Double balance;
 
 }

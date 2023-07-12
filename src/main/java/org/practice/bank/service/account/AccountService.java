@@ -7,11 +7,15 @@ import java.util.List;
 
 public interface AccountService {
 
-    AccountDto getByNumber(String number);
+    AccountDto getById(Long id);
 
-    Account selectByNumber(String number);
+    AccountDto getByNumber(String number);
     AccountDto save(Account account);
-    void delete(String number);
+    void delete(Long id);
     List<AccountDto> getAll();
+
+    void minusBalance(Long accountId, Double sum);
+    void plusBalance(Long accountId, Double sum);
+
 
 }

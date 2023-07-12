@@ -1,6 +1,7 @@
 package org.practice.bank.rest;
 
 import org.practice.bank.dto.account.AccountDto;
+import org.practice.bank.dto.client.ClientDto;
 import org.practice.bank.dto.transaction.TransactionDto;
 import org.practice.bank.model.Account;
 import org.practice.bank.model.Client;
@@ -49,14 +50,14 @@ public class AccountRestControllerV1 {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Client owner = clientService.selectById(accountRequestBody.getOwnerId());
-        if (owner == null) {
+        ClientDto ownerDto = clientService.getById(accountRequestBody.getOwner().getId());
+        if (ownerDto == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         Account account = new Account();
         account.setAccountNumber(accountRequestBody.getAccountNumber());
-        account.setOwner(owner);
+        account.setOwner(accountRequestBody.getOwner());
         account.setBalance(accountRequestBody.getBalance());
         account.setCurrency(accountRequestBody.getCurrency());
 
@@ -70,13 +71,13 @@ public class AccountRestControllerV1 {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Client owner = clientService.selectById(accountRequestBody.getOwnerId());
-        if (owner == null) {
+        ClientDto ownerDto = clientService.getById(accountRequestBody.getOwner().getId());
+        if (ownerDto == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         Account account = new Account();
-        account.setOwner(owner);
+        account.setOwner(accountRequestBody.getOwner());
         account.setBalance(accountRequestBody.getBalance());
         account.setCurrency(accountRequestBody.getCurrency());
 
@@ -85,17 +86,17 @@ public class AccountRestControllerV1 {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AccountDto> deleteAccount(@PathVariable String accountNumber) {
-        if (accountNumber == null) {
+    public ResponseEntity<AccountDto> deleteAccount(@PathVariable Long id) {
+        if (id == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        AccountDto account = accountService.getByNumber(accountNumber);
+        AccountDto account = accountService.getById(id);
         if (account == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        accountService.delete(accountNumber);
+        accountService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -111,12 +112,12 @@ public class AccountRestControllerV1 {
 
     @RequestMapping(value = "{accountNumber}/transactions/outgoing",
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TransactionDto>> getOutgoingTransactionsForAccount(@PathVariable("accountNumber") String accountNumber) {
-        if (accountNumber == null) {
+    public ResponseEntity<List<TransactionDto>> getOutgoingTransactionsForAccount(@PathVariable("accountNumber") Account account) {
+        if (account == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<TransactionDto> transactions = transactionService.getOutgoingTransactionsByAccountNumber(accountNumber);
+        List<TransactionDto> transactions = transactionService.getOutgoingTransactionsByAccountNumber(account);
         if (transactions.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -126,12 +127,12 @@ public class AccountRestControllerV1 {
 
     @RequestMapping(value = "{accountNumber}/transactions/incoming",
             method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TransactionDto>> getIncomingTransactionsForAccount(@PathVariable("accountNumber") String accountNumber) {
-        if (accountNumber == null) {
+    public ResponseEntity<List<TransactionDto>> getIncomingTransactionsForAccount(@PathVariable("accountNumber") Account account) {
+        if (account == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<TransactionDto> transactions = transactionService.getIncomingTransactionsByAccountNumber(accountNumber);
+        List<TransactionDto> transactions = transactionService.getIncomingTransactionsByAccountNumber(account);
         if (transactions.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

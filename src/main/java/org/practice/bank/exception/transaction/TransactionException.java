@@ -1,6 +1,6 @@
 package org.practice.bank.exception.transaction;
 
-public class TransactionException extends Exception {
+public class TransactionException extends RuntimeException {
     public TransactionException() {
     }
 

@@ -3,6 +3,7 @@ package org.practice.bank.request;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.practice.bank.model.Client;
 
 @Getter
 @Setter
@@ -10,8 +11,8 @@ import lombok.ToString;
 public class AccountRequestBody {
 
     private String accountNumber;
-    private Long ownerId;
+    private Client owner;
     private String currency;
-    private Long balance;
+    private Double balance;
 
 }

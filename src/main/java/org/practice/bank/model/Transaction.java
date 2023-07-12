@@ -21,12 +21,12 @@ public class Transaction {
     @Column(name = "transaction_id")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_from")
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "account_from", referencedColumnName = "account_number")
     private Account accountFrom;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_to")
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "account_to", referencedColumnName = "account_number")
     private Account accountTo;
 
     @Column(name = "date")
@@ -34,6 +34,6 @@ public class Transaction {
     @Column(name = "time")
     private Time time;
     @Column(name = "sum")
-    private Long sum;
+    private Double sum;
     
 }

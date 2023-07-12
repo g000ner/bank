@@ -1,10 +1,6 @@
 package org.practice.bank.rest;
 
 import org.practice.bank.dto.transaction.TransactionDto;
-import org.practice.bank.exception.account.AccountNotFoundException;
-import org.practice.bank.exception.transaction.NegativeTransactionSumException;
-import org.practice.bank.exception.transaction.NotEnoughCashFundsException;
-import org.practice.bank.exception.transaction.NotEqualCurrencyException;
 import org.practice.bank.request.TransactionRequestBody;
 import org.practice.bank.service.transaction.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +29,11 @@ public class TransactionRestControllerV1 {
         }
 
         TransactionDto transaction = null;
-        try {
-            transaction = transactionService.doTransaction(
-                    transactionRequestBody.getAccountFromNumber(),
-                    transactionRequestBody.getAccountToNumber(), transactionRequestBody.getSum());
-            return new ResponseEntity<>(transaction, HttpStatus.CREATED);
-        } catch (NegativeTransactionSumException | AccountNotFoundException | NotEnoughCashFundsException |
-                 NotEqualCurrencyException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+
+        transaction = transactionService.doTransaction(
+                transactionRequestBody.getAccountFrom(),
+                transactionRequestBody.getAccountTo(), transactionRequestBody.getSum());
+        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

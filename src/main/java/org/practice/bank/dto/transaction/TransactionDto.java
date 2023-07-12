@@ -15,5 +15,5 @@ public record TransactionDto (
         Account accountTo,
         LocalDate date,
         Time time,
-        Long sum
+        Double sum
 ) {}

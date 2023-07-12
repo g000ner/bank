@@ -27,11 +27,6 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client selectById(Long id) {
-        return clientRepository.findById(id).orElse(null);
-    }
-
-    @Override
     public void save(Client client) {
         clientRepository.save(client);
     }

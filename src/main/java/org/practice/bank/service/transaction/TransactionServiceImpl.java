@@ -1,6 +1,7 @@
 package org.practice.bank.service.transaction;
 
 import lombok.extern.slf4j.Slf4j;
+import org.practice.bank.dto.account.AccountDto;
 import org.practice.bank.dto.transaction.TransactionDto;
 import org.practice.bank.dto.transaction.TransactionDtoMapper;
 import org.practice.bank.exception.account.AccountNotFoundException;
@@ -33,12 +34,12 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public TransactionDto doTransaction(String accountFromNumber, String accountToNumber, Long sum)
+    public TransactionDto doTransaction(Account accountFrom, Account accountTo, Double sum)
             throws NegativeTransactionSumException, AccountNotFoundException, NotEnoughCashFundsException, NotEqualCurrencyException {
-        Account accountFrom = accountService.selectByNumber(accountFromNumber);
-        Account accountTo = accountService.selectByNumber(accountToNumber);
+        AccountDto accountFromDto = accountService.getByNumber(accountFrom.getAccountNumber());
+        AccountDto accountToDto = accountService.getByNumber(accountTo.getAccountNumber());
 
-        if (accountFrom == null || accountTo == null) {
+        if (accountFromDto == null || accountToDto == null) {
             throw new AccountNotFoundException();
         }
 
@@ -46,18 +47,22 @@ public class TransactionServiceImpl implements TransactionService {
             throw new NegativeTransactionSumException();
         }
 
-        if (! accountFrom.getCurrency().equals(accountTo.getCurrency())) {
+        if (! accountFromDto.currency().equals(accountToDto.currency())) {
             throw new NotEqualCurrencyException();
         }
 
-        if (sum > accountFrom.getBalance()) {
+        if (sum > accountFromDto.balance()) {
             throw new NotEnoughCashFundsException();
         }
 
-        accountFrom.setBalance(accountFrom.getBalance() - sum);
-        accountTo.setBalance(accountTo.getBalance() + sum);
+        accountFrom.setBalance(accountFromDto.balance() - sum);
+        accountService.minusBalance(accountFromDto.id(), sum);
+        accountFrom.setId(accountFromDto.id());
 
-        // todo Обработать исключительные ситуации
+        accountTo.setBalance(accountToDto.balance() + sum);
+        accountService.plusBalance(accountToDto.id(), sum);
+        accountTo.setId(accountToDto.id());
+
         Transaction transactionToDo = new Transaction();
         transactionToDo.setAccountFrom(accountFrom);
         transactionToDo.setAccountTo(accountTo);
@@ -69,16 +74,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionDto> getOutgoingTransactionsByAccountNumber(String accountFromNumber) {
-        Account accountFrom = accountService.selectByNumber(accountFromNumber);
-        return transactionRepository.findByAccountFrom(accountFrom).
+    public List<TransactionDto> getOutgoingTransactionsByAccountNumber(Account account) {
+        return transactionRepository.findByAccountFrom(account).
                 stream().map(transactionDtoMapper).collect(Collectors.toList());
     }
 
     @Override
-    public List<TransactionDto> getIncomingTransactionsByAccountNumber(String accountToNumber) {
-        Account accountTo = accountService.selectByNumber(accountToNumber);
-        return transactionRepository.findByAccountTo(accountTo).
+    public List<TransactionDto> getIncomingTransactionsByAccountNumber(Account account) {
+        return transactionRepository.findByAccountTo(account).
                 stream().map(transactionDtoMapper).collect(Collectors.toList());
     }
 

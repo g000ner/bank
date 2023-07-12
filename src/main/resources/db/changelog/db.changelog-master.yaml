@@ -29,10 +29,17 @@ databaseChangeLog:
             tableName: accounts
             columns:
               - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
                   name: account_number
                   type: varchar(20)
                   constraints:
-                    primaryKey: true
+                    unique: true
                     nullable: false
               - column:
                   name: account_owner

@@ -1,6 +1,6 @@
 package org.practice.bank.exception.account;
 
-public class AccountException extends Exception {
+public class AccountException extends RuntimeException {
     public AccountException() {
     }
 
