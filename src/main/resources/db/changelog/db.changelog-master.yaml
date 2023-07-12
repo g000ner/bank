@@ -1,0 +1,81 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog-create-clients-table.yaml
+  - changeSet:
+      id: 1
+      author: "Dmitry Kiselev"
+      changes:
+        - createTable:
+            tableName: clients
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: varchar(250)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: passport_number
+                  type: varchar(4)
+              - column:
+                  name: passport_seria
+                  type: varchar(6)
+        - createTable:
+            tableName: accounts
+            columns:
+              - column:
+                  name: account_number
+                  type: varchar(20)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: account_owner
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_account_owner
+                    references: clients(id)
+              - column:
+                  name: currency
+                  type: varchar(3)
+              - column:
+                  name: balance
+                  type: NUMERIC
+        - createTable:
+            tableName: transactions
+            columns:
+              - column:
+                  name: transaction_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: account_from
+                  type: varchar(20)
+                  constraints:
+                    foreignKeyName: fk_trans_account_from
+                    references: accounts(account_number)
+                    nullable: false
+              - column:
+                  name: account_to
+                  type: varchar(20)
+                  constraints:
+                    foreignKeyName: fk_trans_account_to
+                    references: accounts(account_number)
+                    nullable: false
+              - column:
+                  name: date
+                  type: DATE
+              - column:
+                  name: time
+                  type: TIME
+              - column:
+                  name: sum
+                  type: NUMERIC
